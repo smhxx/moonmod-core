@@ -41,7 +41,7 @@ test: SILENT:="-s"
 test: libraries
 	@busted
 
-testdist: dist
+testdist: libraries dist
 	@busted -Xhelper="--use-dist"
 
 resources:
