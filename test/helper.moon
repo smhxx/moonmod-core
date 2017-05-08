@@ -1,6 +1,14 @@
 assert = require "luassert"
 say = require "say"
 
+useDistMode = ->
+  flag = false
+  for i, v in pairs arg
+    if v == "-Xhelper=--use-dist"
+      flag = true
+      break
+  return flag
+
 -- UTILITY FUNCTIONS
 export use = (path) ->
   switch string.match path, ".*(%..*)$"
@@ -9,15 +17,12 @@ export use = (path) ->
     when ".moon"
       (assert (require "moonscript").loadfile path)!
 
-export source = (dist, sources) ->
-  useDistMode = false
-  for i, v in pairs arg
-    if v == "-Xhelper=--use-dist"
-      useDistMode = true
-      break
-  if useDistMode == true
-    use dist
-  else
+export dist = (dists) ->
+  if useDistMode!
+    dists!
+
+export source = (sources) ->
+  if not useDistMode!
     sources!
 
 export inspect = (table, indent) ->

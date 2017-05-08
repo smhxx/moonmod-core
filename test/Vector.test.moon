@@ -1,6 +1,9 @@
 describe "Vector", ->
 
-  source "./dist/moonmod-core.lua", ->
+  dist ->
+    use "./dist/moonmod-core.lua"
+
+  source ->
     use "./src/Vector.moon"
 
   before_each ->

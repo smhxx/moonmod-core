@@ -1,6 +1,9 @@
 describe "CallbackHandler", ->
 
-  source "./dist/moonmod-core.lua", ->
+  dist ->
+    use "./dist/moonmod-core.lua"
+
+  source ->
     use "./src/CallbackHandler.moon"
 
   before_each ->

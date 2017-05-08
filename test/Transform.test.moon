@@ -1,6 +1,9 @@
 describe "Transform", ->
 
-  source "./dist/moonmod-core.lua", ->
+  dist ->
+    use "./dist/moonmod-core.lua"
+
+  source ->
     use "./src/Vector.moon"
     use "./src/Transform.moon"
 
