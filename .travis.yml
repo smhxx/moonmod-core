@@ -3,8 +3,13 @@ sudo: false
 
 before_install:
   - pip install hererocks
-  - hererocks lua -r^ -l5.3.3
-  - export PATH=$PATH:$PWD/lua/bin
+  - hererocks lua51 -r^ -l5.1
+  - export PATH=$PATH:$PWD/squish:$PWD/lua51/bin
+  - git clone https://github.com/LuaDist/squish.git
+  - make -C squish squish
+  - sed -i "1s;.*;#!$(pwd)/lua51/bin/lua;" squish/squish
+  - hererocks lua53 -r^ -l5.3.3
+  - export PATH=${PATH%:*}:$PWD/lua53/bin
 
 install:
   - luarocks install busted
