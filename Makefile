@@ -18,7 +18,7 @@ get_bld_squishy = $(if $(call get_src_squishy,"$(1)"),$(call convert_dir,$(call 
 all_src_outputs = $(foreach squishy,$(all_src_squishies),$(call get_output,"$(squishy)"))
 all_lib_outputs = $(foreach squishy,$(all_lib_squishies),$(call get_output,"$(squishy)"))
 
-all_manifest_inputs = $(shell echo $$(sed -nr "s;^.*\"([^\"]*\.json)\".*;templates/\1;p" "templates/manifest.json"))
+all_manifest_inputs = $(shell if [ -e "templates/manifest.json" ]; then echo $$(sed -nr "s;^.*\"([^\"]*\.json)\".*;templates/\1;p" "templates/manifest.json"); fi)
 
 .PHONY: save dist test testdist libraries resources alwayscheck
 .PRECIOUS: build/%.lua build/%/squishy dist/%.lua libraries/%
