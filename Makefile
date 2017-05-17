@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-fix_path = $(shell sed -n -e ":loop" -e "s;[^/]*/\.\./;;g" -e "t loop" -e "p" <(echo "$(1)"))
+fix_path = $(shell sed -n -e ":loop" -e "s;[^/ ]*/\.\./;;g" -e "t loop" -e "p" <(echo "$(1)"))
 get_output = $(call fix_path,$(shell sed -n "/^Output \".*\"/s;^.*\"\(.*\)\".*;$(call get_out_prefix,"$(1)")\1;p" "$(1)"))
 get_inputs = $(call fix_path,$(shell sed -n "/^Main \".*\"/s;^.*\"\(.*\)\".*;$(call get_ins_prefix,"$(1)")/\1;p" "$(1)"))
 get_out_prefix = $(shell sed -rn "s;^(.*(^|\/))(src|build)\/.*;\1;p" <(echo "$(1)"))
@@ -17,6 +17,8 @@ get_bld_squishy = $(if $(call get_src_squishy,"$(1)"),$(call convert_dir,$(call 
 
 all_src_outputs = $(foreach squishy,$(all_src_squishies),$(call get_output,"$(squishy)"))
 all_lib_outputs = $(foreach squishy,$(all_lib_squishies),$(call get_output,"$(squishy)"))
+
+all_manifest_inputs = $(shell echo $$(sed -nr "s;^.*\"([^\"]*\.json)\".*;templates/\1;p" "templates/manifest.json"))
 
 .PHONY: save dist test testdist libraries resources alwayscheck
 .PRECIOUS: build/%.lua build/%/squishy dist/%.lua libraries/%
@@ -41,18 +43,13 @@ test: SILENT:="-s"
 test: libraries
 	@busted
 
+testdist: SILENT:="-s"
 testdist: libraries dist
 	@busted -Xhelper="--use-dist"
 
 resources:
-	@echo "Clearing staged changes..."
-	@git reset
-	@echo "Adding resources to commit..."
-	@git add resources/*
-	@if git commit -m "Updating resources"; then\
-		echo "Pushing to gh-pages...";\
-		git subtree push --prefix resources origin gh-pages;\
-	fi
+	@echo "Pushing to gh-pages..."
+	@git subtree push --prefix resources origin gh-pages
 	@echo "Done!"
 
 # Build Rules
@@ -72,14 +69,23 @@ libraries/%: alwayscheck
 
 alwayscheck:
 
-dist/save.json: templates/save.json $(call all_src_outputs)
-	@cp templates/save.json dist/save.json
+dist/save.json: templates/.save.json $(call all_src_outputs)
+	@cp templates/.save.json dist/save.json
 	@for source in $(call all_src_outputs); do\
 		/bin/bash templates/.import.sh $$source;\
 	done
-	@echo "Finished creating dist/save.json"
+	@echo "Updating last modified date..."
+	@jq --arg date "$$(date +"%D %r")" '.Date=$$date' "dist/save.json" > dist/.save.json
+	@mv -f "dist/.save.json" "dist/save.json"
+	@echo "Finished creating save file"
+
+templates/.save.json: templates/manifest.json $(call all_manifest_inputs)
+	@echo "Building save template from manifest..."
+	@/bin/bash templates/.build.sh
+	@echo "Finished building save template"
 
 .SECONDEXPANSION:
+dist/%.lua: SILENT:="-s"
 dist/%.lua: $$(call get_bld_squishy,$$@) $$(call get_inputs,$$(call get_src_squishy,$$@))
 	@mkdir -p $(@D)
 	@squish $(shell dirname $<)
