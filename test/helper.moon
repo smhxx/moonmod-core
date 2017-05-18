@@ -1,7 +1,7 @@
 assert = require "luassert"
 say = require "say"
 
-useDistMode = ->
+export useDistMode = ->
   flag = false
   for i, v in pairs arg
     if v == "-Xhelper=--use-dist"
@@ -10,11 +10,13 @@ useDistMode = ->
   return flag
 
 -- UTILITY FUNCTIONS
-export use = (path) ->
+export use = (path, context) ->
   switch string.match path, ".*(%..*)$"
     when ".lua"
+      export self = context
       (assert loadfile path)!
     when ".moon"
+      export self = context
       (assert (require "moonscript").loadfile path)!
 
 export dist = (dists) ->
