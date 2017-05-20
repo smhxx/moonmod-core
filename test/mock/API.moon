@@ -120,6 +120,9 @@ export getObjectFromGUID = (guid) ->
       return v
   nil
 
+export getAllObjects = ->
+  return ApiContext.objects
+
 export getSeatedPlayers = ->
   return ApiContext.players
 
