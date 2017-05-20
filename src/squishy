@@ -1,6 +1,7 @@
 Main "Vector.lua"
 Main "Transform.lua"
 Main "CallbackHandler.lua"
+Main "EventHandler.lua"
 
 Option "minify" "full"
 Output "dist/moonmod-core.lua"

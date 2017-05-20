@@ -11,7 +11,12 @@ describe "CallbackHandler", ->
 
   describe ".new()", ->
 
-    it "creates a unique empty table to hold its callbacks", ->
+    it "takes on a given table of initial callbacks if provided", ->
+      callbacks = { { fn: -> } }
+      handler = CallbackHandler callbacks
+      assert.equals callbacks, handler.callbacks
+
+    it "creates a unique empty table to hold its callbacks if one is not provided", ->
       assert.are.same { }, handler.callbacks
       assert.is.not.inherited handler, "callbacks"
 
