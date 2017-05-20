@@ -1,5 +1,3 @@
-unpack = unpack or table.unpack
-
 export class CallbackHandler
   new: (callbacks) =>
     @callbacks = callbacks or { }
@@ -21,6 +19,6 @@ export class CallbackHandler
   triggerCallbacks: (...) =>
     for _, callback in ipairs @callbacks
       if callback.owner != nil
-        callback.fn callback.owner, unpack {...}
+        callback.fn callback.owner, ...
       else
-        callback.fn unpack {...}
+        callback.fn ...
