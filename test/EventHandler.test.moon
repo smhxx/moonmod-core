@@ -101,6 +101,15 @@ describe "EventHandler", ->
       assert.spy(owner.callback).was.called!
 
     it "passes the event's arguments to any triggered callbacks", ->
+      callback = spy.new ->
+      handler\addCallback filter, callback
+      handler\processEvent 1, 2, "foo"
+      assert.spy(callback).was.called!
+      assert.equals 1, callback.calls[1].vals[1]
+      assert.equals 2, callback.calls[1].vals[2]
+      assert.equals "foo", callback.calls[1].vals[3]
+
+    it "passes correct arguments to callbacks with owners specified", ->
       owner = {
         callback: spy.new =>
       }
