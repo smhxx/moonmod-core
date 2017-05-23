@@ -31,9 +31,13 @@ export Card = {
 
   isFaceDown: (guid) ->
     obj = getObjectFromGUID guid
-    rot = obj\getRotation!
-    rot[3] > 90 and rot[3] < 270
+    if obj
+      rot = obj\getRotation!
+      rot[3] > 90 and rot[3] < 270
 
   isFaceUp: (guid) ->
-    not Card.isFaceDown guid
+    obj = getObjectFromGUID guid
+    if obj
+      rot = obj\getRotation!
+      rot[3] < 90 or rot[3] > 270
 }

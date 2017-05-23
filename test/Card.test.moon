@@ -96,6 +96,11 @@ describe "Card", ->
       card.roattion = { 0, 180, 348.1 }
       assert.equals false, Card.isFaceDown card.guid
 
+    it "fails gracefully if the card does not exist", ->
+      ApiContext.objects = { }
+      assert.no.error -> Card.isFaceDown card.guid
+      assert.is.Nil Card.isFaceDown card.guid
+
   describe ".isFaceUp()", ->
 
     before_each ->
@@ -112,3 +117,8 @@ describe "Card", ->
       assert.equals false, Card.isFaceUp card.guid
       card.roattion = { 0, 180, 174.3 }
       assert.equals false, Card.isFaceUp card.guid
+
+    it "fails gracefully if the card does not exist", ->
+      ApiContext.objects = { }
+      assert.no.error -> Card.isFaceUp card.guid
+      assert.is.Nil Card.isFaceUp card.guid
