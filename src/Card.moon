@@ -28,4 +28,12 @@ export Card = {
         object\setRotationSmooth rotation
       else
         object\takeObject { :guid, :position, :rotation }
+
+  isFaceDown: (guid) ->
+    obj = getObjectFromGUID guid
+    rot = obj\getRotation!
+    rot[3] > 90 and rot[3] < 270
+
+  isFaceUp: (guid) ->
+    not Card.isFaceDown guid
 }

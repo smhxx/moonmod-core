@@ -12,6 +12,8 @@ describe "Card", ->
     new: (@guid) =>
     setPositionSmooth: =>
     setRotationSmooth: =>
+    getRotation: =>
+      @rotation
 
   class Container
     new: (@tag, @guid) =>
@@ -76,3 +78,37 @@ describe "Card", ->
       assert.spy(call).was.called!
       assert.equals deck, call.calls[1].refs[1]
       assert.are.same { guid: card.guid, :position, :rotation }, call.calls[1].vals[2]
+
+  describe ".isFaceDown()", ->
+
+    before_each ->
+      table.insert ApiContext.objects, card
+
+    it "returns true if the object's zRot is closer to 180 than to 0 or 360", ->
+      card.rotation = { 0, 180, 192.7 }
+      assert.equals true, Card.isFaceDown card.guid
+      card.roattion = { 0, 180, 174.3 }
+      assert.equals true, Card.isFaceDown card.guid
+
+    it "returns false if the object's zRot is closer to 0 or 360 than to 180", ->
+      card.rotation = { 0, 180, 34.2 }
+      assert.equals false, Card.isFaceDown card.guid
+      card.roattion = { 0, 180, 348.1 }
+      assert.equals false, Card.isFaceDown card.guid
+
+  describe ".isFaceUp()", ->
+
+    before_each ->
+      table.insert ApiContext.objects, card
+
+    it "returns true if the object's zRot is closer to 0 or 360 than to 180", ->
+      card.rotation = { 0, 180, 34.2 }
+      assert.equals true, Card.isFaceUp card.guid
+      card.roattion = { 0, 180, 348.1 }
+      assert.equals true, Card.isFaceUp card.guid
+
+    it "returns false if the object's zRot is closer to 180 than to 0 or 360", ->
+      card.rotation = { 0, 180, 192.7 }
+      assert.equals false, Card.isFaceUp card.guid
+      card.roattion = { 0, 180, 174.3 }
+      assert.equals false, Card.isFaceUp card.guid
