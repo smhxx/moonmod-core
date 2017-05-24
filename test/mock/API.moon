@@ -112,6 +112,18 @@ export class ApiContext
 -- The following API calls are not part of the context object, because they are
 -- not part of the Object API, but rather the global API. (i.e. they are not
 -- called using "self")
+export JSON = {
+
+}
+
+export Player = {
+  
+}
+
+export Timer = {
+
+}
+
 export getObjectFromGUID = (guid) ->
   for _, v in ipairs ApiContext.objects
     if v == guid

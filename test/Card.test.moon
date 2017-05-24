@@ -79,6 +79,39 @@ describe "Card", ->
       assert.equals deck, call.calls[1].refs[1]
       assert.are.same { guid: card.guid, :position, :rotation }, call.calls[1].vals[2]
 
+    it "retries on the next frame if the card is not immediately found", ->
+      -- This is in the spec due to strange behavior in the game when the
+      -- second-to-last card is removed from a deck; the Deck entity is
+      -- destroyed and, for one frame, there is no representation of the last
+      -- remaining card ANYWHERE in the game world. As a failsafe, we wait for
+      -- one frame and try again any time the named card cannot be found. If
+      -- this fails, too, then the card REALLY doesn't exist.
+      Timer.create = spy.new ->
+      Card.put card.guid, position, rotation
+      assert.spy(Timer.create).was.called!
+      params = Timer.create.calls[1].vals[1]
+      assert.equals "Card.put " .. card.guid, params.identifier
+      assert.not.nil "retryCardPut", params.function_name
+      assert.equals card.guid, params.parameters[1]
+      assert.are.same position, params.parameters[2]
+      assert.are.same rotation, params.parameters[3]
+      assert.equals false, params.parameters[4]
+
+    it "does not retry if the supplied retry parameter is false", ->
+      Timer.create = spy.new ->
+      Card.put card.guid, position, rotation, false
+      assert.spy(Timer.create).was.not.called!
+
+    it "is called with retry = false when retryCardPut is invoked", ->
+      call = spy.on Card, "put"
+      retryCardPut card.guid, position, rotation, false
+      call\revert!
+      assert.spy(call).was.called!
+      assert.equals card.guid, call.calls[1].vals[1]
+      assert.are.same position, call.calls[1].vals[2]
+      assert.are.same rotation, call.calls[1].vals[3]
+      assert.equals false, call.calls[1].vals[4]
+
   describe ".isFaceDown()", ->
 
     before_each ->

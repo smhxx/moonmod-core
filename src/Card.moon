@@ -10,6 +10,9 @@ hasCard = (container, guid) ->
     return true if v.guid == guid
   false
 
+export retryCardPut = (...) ->
+  Card.put ...
+
 export Card = {
   find: (guid) ->
     if getObjectFromGUID guid
@@ -19,7 +22,7 @@ export Card = {
         return container.guid
     return nil
 
-  put: (guid, position, rotation) ->
+  put: (guid, position, rotation, retry = true) ->
     location = Card.find guid
     if location
       object = getObjectFromGUID location
@@ -28,6 +31,12 @@ export Card = {
         object\setRotationSmooth rotation
       else
         object\takeObject { :guid, :position, :rotation }
+    else if retry
+      Timer.create {
+        identifier: "Card.put " .. guid
+        function_name: "retryCardPut"
+        parameters: { guid, position, rotation, false }
+      }
 
   isFaceDown: (guid) ->
     obj = getObjectFromGUID guid
