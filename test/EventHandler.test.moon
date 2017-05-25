@@ -4,6 +4,7 @@ describe "EventHandler", ->
     use "./dist/moonmod-core.lua"
 
   source ->
+    use "./src/Util.moon"
     use "./src/EventHandler.moon"
 
   before_each ->

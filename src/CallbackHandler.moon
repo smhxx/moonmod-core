@@ -3,17 +3,18 @@ export class CallbackHandler
     @callbacks = callbacks or { }
 
   addCallback: (fn, owner) =>
-    for _, v in ipairs @callbacks
-      if v.fn == fn and v.owner == owner
-        return false
-    table.insert @callbacks, { :fn, :owner }
-    true
+    sameParams = (v) -> v.fn == fn and v.owner == owner
+    if not Util.trueInTable @callbacks, sameParams
+      table.insert @callbacks, { :fn, :owner }
+      return true
+    false
 
   removeCallback: (fn, owner) =>
-    for i, v in ipairs @callbacks
-      if v.fn == fn and v.owner == owner
-        table.remove @callbacks, i
-        return true
+    sameParams = (v) -> v.fn == fn and v.owner == owner
+    i = Util.trueInTable @callbacks, sameParams
+    if i
+      table.remove @callbacks, i
+      return true
     false
 
   triggerCallbacks: (...) =>

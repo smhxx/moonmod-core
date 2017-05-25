@@ -6,9 +6,7 @@ getAllContainers = ->
   returns
 
 hasCard = (container, guid) ->
-  for _, v in ipairs container\getObjects!
-    return true if v.guid == guid
-  false
+  Util.trueInTable container\getObjects!, (v) -> v.guid == guid
 
 export retryCardPut = (...) ->
   Card.put ...
@@ -17,10 +15,8 @@ export Card = {
   find: (guid) ->
     if getObjectFromGUID guid
       return guid
-    for _, container in ipairs getAllContainers!
-      if hasCard container, guid
-        return container.guid
-    return nil
+    _, location = Util.trueInTable getAllContainers!, (v) -> hasCard v, guid
+    return location.guid if location
 
   put: (guid, position, rotation, retry = true) ->
     location = Card.find guid

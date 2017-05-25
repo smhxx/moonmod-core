@@ -6,6 +6,7 @@ describe "Card", ->
     use "./dist/moonmod-core.lua"
 
   source ->
+    use "./src/Util.moon"
     use "./src/Card.moon"
 
   class Object
