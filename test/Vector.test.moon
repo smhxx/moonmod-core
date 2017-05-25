@@ -148,4 +148,4 @@ describe "Vector", ->
 
     it "creates a table of its own data, ordered according to the provided indices", ->
       vector = Vector data1
-      assert.are.same { 6, 3, 2 }, vector\strip { "c", "b", "a" }
+      assert.are.same { 6, 3, 2 }, vector\strip "c", "b", "a"

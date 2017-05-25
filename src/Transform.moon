@@ -5,7 +5,7 @@ matrixMultiply = (rowData, colData) ->
   sum
 
 applyRotationMatrix = (matrix) =>
-  rowData = @position\strip { "x", "y", "z" }
+  rowData = @position\strip "x", "y", "z"
   @position.data = {
     x: matrixMultiply rowData, matrix[1]
     y: matrixMultiply rowData, matrix[2]

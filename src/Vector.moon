@@ -36,8 +36,8 @@ export class Vector
       @data[k] = not lambda and v or lambda k, v
     return @
 
-  strip: (keys) =>
+  strip: (...) =>
     ret = { }
-    for i = 1, #keys
-      ret[i] = @data[keys[i]]
+    for i, key in ipairs {...}
+      ret[i] = @data[key]
     ret
