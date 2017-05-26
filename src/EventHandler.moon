@@ -1,3 +1,5 @@
+unpack = unpack or table.unpack
+
 export class EventHandler
   new: (eventName, callbacks) =>
     @callbacks = callbacks or { }
@@ -21,8 +23,8 @@ export class EventHandler
     false
 
   processEvent: (...) =>
-    args = ...
-    i, v = Util.trueInTable @callbacks, (v) -> v.filter args
+    args = {...}
+    i, v = Util.trueInTable @callbacks, (v) -> v.filter unpack args
     if i
       if v.owner
         v.fn v.owner, ...
